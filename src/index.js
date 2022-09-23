@@ -36,14 +36,13 @@ function onLoadMoreImages() {
 
 function onFilterSearch(data) {
   console.log(data);
-  if (data.length >= 1) {
+  if (data.length > 1) {
     onCreateImageDescription(data);
-  }
-  if (data.totalHits === data.length) {
+  } else if (data.totalHits) {
     Notiflix.Notify.warning(
       'We are sorry, but you have reached the end of search results'
     );
-  } else if (data.length === 0) {
+  } else {
     Notiflix.Notify.failure(
       'Sorry, there are no images matching your search query. Please try again.'
     );
