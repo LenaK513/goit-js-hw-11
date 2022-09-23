@@ -7,6 +7,7 @@ import NewsApiService from './news-apiservece';
 const form = document.querySelector('#search-form');
 const input = document.querySelector('#input');
 const button = document.querySelector('.load-more');
+const gallery = document.querySelector('.gallery');
 
 const newsApiService = new NewsApiService();
 
@@ -15,25 +16,60 @@ console.log(newsApiService);
 form.addEventListener('submit', onSearchImages);
 button.addEventListener('click', onLoadMoreImages);
 
-let searchQuery = '';
+// let searchQuery = '';
 
 function onSearchImages(event) {
   event.preventDefault();
-
-  searchQuery = event.currentTarget.elements.searchQuery.value;
-
-  // const url = `https://pixabay.com/api/?key=30064107-c73b2a0aceced325114b9b159&q=${searchQuery}&image_type=photo&orientation=horizontal&safesearch=true&page=1&per_page=40`;
-
-  // fetch(url)
-  //   .then(response => response.json())
-  //   .then(console.log);
-  newsApiService.fetchImages(searchQuery);
+  onClearGallery();
+  newsApiService.searchQuery = event.currentTarget.elements.searchQuery.value;
+  newsApiService.resetPage();
+  newsApiService
+    .fetchImages()
+    .then(onCreateImageDescription)
+    .catch(onImageError);
 }
 
 function onLoadMoreImages() {
-  // const url = `https://pixabay.com/api/?key=30064107-c73b2a0aceced325114b9b159&q=${searchQuery}&image_type=photo&orientation=horizontal&safesearch=true&page=1&per_page=40`;
-  // fetch(url)
-  //   .then(response => response.json())
-  //   .then(console.log);
-  newsApiService.fetchImages(searchQuery);
+  newsApiService
+    .fetchImages()
+    .then(onCreateImageDescription)
+    .catch(onImageError);
+}
+
+function onCreateImageDescription(hits) {
+  const imageInfo = hits
+    .map(
+      h => `<div class="photo-card">
+  <img src="${h.webformatURL}" alt="${h.tags}" loading="lazy" />
+  <div class="info">
+    <p class="info-item">
+      <b>Likes${h.likes}</b>
+    </p>
+    <p class="info-item">
+      <b>Views ${h.views}</b>
+    </p>
+    <p class="info-item">
+      <b>Comments${h.comments}</b>
+    </p>
+    <p class="info-item">
+      <b>Downloads${h.downloads}</b>
+    </p>
+  </div>
+</div>`
+    )
+    .join('');
+
+  gallery.insertAdjacentHTML('beforeend', imageInfo);
+}
+
+function onClearGallery() {
+  gallery.innerHTML = '';
+}
+
+function onImageError(error) {
+  if ((hits.length = [])) {
+    Notiflix.Notify.failure(
+      'Sorry, there are no images matching your search query. Please try again.'
+    );
+  }
 }
