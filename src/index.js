@@ -34,22 +34,24 @@ function onLoadMoreImages() {
   // .catch(onImageError);
 }
 
-function onFilterSearch(hits) {
-  if (hits.length >= 1) {
-    onCreateImageDescription(hits);
-  } else if (hits.length == hits.length) {
+function onFilterSearch(data) {
+  console.log(data);
+  if (data.length >= 1) {
+    onCreateImageDescription(data);
+  }
+  if (data.totalHits === data.length) {
     Notiflix.Notify.warning(
       'We are sorry, but you have reached the end of search results'
     );
-  } else if ((hits.length = '')) {
+  } else if (data.length === 0) {
     Notiflix.Notify.failure(
       'Sorry, there are no images matching your search query. Please try again.'
     );
   }
 }
 
-function onCreateImageDescription(hits) {
-  const imageInfo = hits
+function onCreateImageDescription(data) {
+  const imageInfo = data
     .map(
       h => `<div class="photo-card">
   <img src="${h.webformatURL}" alt="${h.tags}" loading="lazy" />
@@ -77,11 +79,3 @@ function onCreateImageDescription(hits) {
 function onClearGallery() {
   gallery.innerHTML = '';
 }
-
-// function onImageError(error) {
-//   if ((hits = [])) {
-//     Notiflix.Notify.failure(
-//       'Sorry, there are no images matching your search query. Please try again.'
-//     );
-//   }
-// }
