@@ -1,6 +1,10 @@
 import './css/styles.css';
 import axios from 'axios';
 
+import SimpleLightbox from 'simplelightbox';
+// Додатковий імпорт стилів
+import 'simplelightbox/dist/simple-lightbox.min.css';
+
 import Notiflix from 'notiflix';
 import NewsApiService from './news-apiservece';
 
@@ -16,24 +20,32 @@ console.log(newsApiService);
 form.addEventListener('submit', onSearchImages);
 button.addEventListener('click', onLoadMoreImages);
 
-// let searchQuery = '';
-
 function onSearchImages(event) {
   event.preventDefault();
   onClearGallery();
   newsApiService.searchQuery = event.currentTarget.elements.searchQuery.value;
   newsApiService.resetPage();
-  newsApiService
-    .fetchImages()
-    .then(onCreateImageDescription)
-    .catch(onImageError);
+  newsApiService.fetchImages().then(onFilterSearch);
+  // .catch(onImageError);
 }
 
 function onLoadMoreImages() {
-  newsApiService
-    .fetchImages()
-    .then(onCreateImageDescription)
-    .catch(onImageError);
+  newsApiService.fetchImages().then(onFilterSearch);
+  // .catch(onImageError);
+}
+
+function onFilterSearch(hits) {
+  if (hits.length >= 1) {
+    onCreateImageDescription(hits);
+  } else if (hits.length == hits.length) {
+    Notiflix.Notify.warning(
+      'We are sorry, but you have reached the end of search results'
+    );
+  } else if ((hits.length = '')) {
+    Notiflix.Notify.failure(
+      'Sorry, there are no images matching your search query. Please try again.'
+    );
+  }
 }
 
 function onCreateImageDescription(hits) {
@@ -66,10 +78,10 @@ function onClearGallery() {
   gallery.innerHTML = '';
 }
 
-function onImageError(error) {
-  if ((hits.length = [])) {
-    Notiflix.Notify.failure(
-      'Sorry, there are no images matching your search query. Please try again.'
-    );
-  }
-}
+// function onImageError(error) {
+//   if ((hits = [])) {
+//     Notiflix.Notify.failure(
+//       'Sorry, there are no images matching your search query. Please try again.'
+//     );
+//   }
+// }
