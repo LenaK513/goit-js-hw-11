@@ -31,18 +31,19 @@ function onSearchImages(event) {
 
 function onLoadMoreImages() {
   newsApiService.fetchImages().then(onFilterSearch);
-  // .catch(onImageError);
 }
 
 function onFilterSearch(data) {
   console.log(data);
   if (data.length > 1) {
     onCreateImageDescription(data);
-  } else if (data.totalHits) {
+  }
+  if (data.totalHits) {
     Notiflix.Notify.warning(
       'We are sorry, but you have reached the end of search results'
     );
-  } else {
+  }
+  if (data.length < 1) {
     Notiflix.Notify.failure(
       'Sorry, there are no images matching your search query. Please try again.'
     );
