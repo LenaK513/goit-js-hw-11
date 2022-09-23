@@ -12,6 +12,7 @@ export default class NewsApiService {
       page: '1',
       per_page: '40',
     };
+
     fetch(url, options)
       .then(response => response.json())
       .then(console.log);
