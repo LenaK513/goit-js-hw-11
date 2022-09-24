@@ -27,25 +27,36 @@ function onSearchImages(event) {
   newsApiService.resetPage();
   newsApiService.fetchImages().then(onFilterSearch);
   // .catch(onImageError);
+
+  console.log(newsApiService);
 }
 
 function onLoadMoreImages() {
-  newsApiService.fetchImages().then(onFilterSearch);
+  newsApiService.fetchImages().then(onImagesListNotification);
 }
 
 function onFilterSearch(data) {
   console.log(data);
-  if (data.length > 1) {
+
+  if (data.length) {
     onCreateImageDescription(data);
-  }
-  if (data.totalHits) {
-    Notiflix.Notify.warning(
-      'We are sorry, but you have reached the end of search results'
-    );
-  }
-  if (data.length < 1) {
+  } else {
     Notiflix.Notify.failure(
       'Sorry, there are no images matching your search query. Please try again.'
+    );
+  }
+
+  console.dir(data);
+}
+
+function onImagesListNotification(data) {
+  console.log(data);
+  if (data.length) {
+    onCreateImageDescription(data);
+  }
+  if (data.length < newsApiService.per_page) {
+    Notiflix.Notify.warning(
+      'We are sorry, but you have reached the end of search results'
     );
   }
 }
@@ -57,17 +68,27 @@ function onCreateImageDescription(data) {
   <img src="${h.webformatURL}" alt="${h.tags}" loading="lazy" />
   <div class="info">
     <p class="info-item">
-      <b>Likes${h.likes}</b>
+      <b>Likes
+      <br>
+      ${h.likes}</b>
     </p>
     <p class="info-item">
-      <b>Views ${h.views}</b>
+      <b>Views 
+      <br>
+      ${h.views}</b>
     </p>
     <p class="info-item">
-      <b>Comments${h.comments}</b>
+      <b>Comments
+      <br>
+      ${h.comments}
+      </b>
     </p>
     <p class="info-item">
-      <b>Downloads${h.downloads}</b>
+      <b>Downloads
+      <br>
+      ${h.downloads}</b>
     </p>
+    
   </div>
 </div>`
     )
