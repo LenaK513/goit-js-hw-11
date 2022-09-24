@@ -65,7 +65,9 @@ function onCreateImageDescription(data) {
   const imageInfo = data
     .map(
       h => `<div class="photo-card">
+      <div class="img-thumb">
   <img src="${h.webformatURL}" alt="${h.tags}" loading="lazy" />
+  </div>
   <div class="info">
     <p class="info-item">
       <b>Likes
