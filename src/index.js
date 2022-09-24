@@ -36,9 +36,12 @@ function onLoadMoreImages() {
 }
 
 function onFilterSearch(data) {
-  console.log(data);
+   console.log(data);
 
-  if (data.length) {
+  if (data.hits.length) {
+     Notiflix.Notify.success(
+    `Hooray! We found ${data.totalHits} images.`
+  );
     onCreateImageDescription(data);
   } else {
     Notiflix.Notify.failure(
@@ -51,10 +54,11 @@ function onFilterSearch(data) {
 
 function onImagesListNotification(data) {
   console.log(data);
+  const remainImages = Math.ceil(data.totalHits/newsApiService.per_page)
   if (data.length) {
     onCreateImageDescription(data);
   }
-  if (data.length < newsApiService.per_page) {
+  if (remainImages < newsApiService.per_page) {
     Notiflix.Notify.warning(
       'We are sorry, but you have reached the end of search results'
     );
@@ -62,7 +66,8 @@ function onImagesListNotification(data) {
 }
 
 function onCreateImageDescription(data) {
-  const imageInfo = data
+  console.log(data)
+  const imageInfo = data.hits
     .map(
       h => `<div class="photo-card">
       <div class="img-thumb">
