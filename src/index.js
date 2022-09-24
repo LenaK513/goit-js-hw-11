@@ -71,7 +71,9 @@ function onCreateImageDescription(data) {
     .map(
       h => `<div class="photo-card">
       <div class="img-thumb">
+      <a href=${h.largeImageURL}>
   <img src="${h.webformatURL}" alt="${h.tags}" loading="lazy" />
+  </a>
   </div>
   <div class="info">
     <p class="info-item">
@@ -102,7 +104,17 @@ function onCreateImageDescription(data) {
     .join('');
 
   gallery.insertAdjacentHTML('beforeend', imageInfo);
+
+  
+const lightbox = new SimpleLightbox(".gallery a", {
+  captionsData: "alt",
+  captionPosition: "bottom",
+  captionDelay: "250",
+});
+lightbox.refresh()
 }
+
+
 
 function onClearGallery() {
   gallery.innerHTML = '';
