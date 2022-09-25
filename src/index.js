@@ -24,7 +24,7 @@ function onSearchImages(event) {
   event.preventDefault();
   onClearGallery();
   newsApiService.searchQuery = event.currentTarget.elements.searchQuery.value;
-  newsApiService.resetPage();
+  console.log(newsApiService.resetPage());
   newsApiService.fetchImages().then(onFilterSearch);
   // .catch(onImageError);
 
@@ -32,7 +32,7 @@ function onSearchImages(event) {
 }
 
 function onLoadMoreImages() {
-  newsApiService.fetchImages().then(onImagesListNotification);
+  newsApiService.fetchImages().then(onWarnNotification);
 }
 
 function onFilterSearch(data) {
@@ -50,13 +50,14 @@ function onFilterSearch(data) {
   console.dir(data);
 }
 
-function onImagesListNotification(data) {
-  console.log(data);
-  const remainImages = Math.ceil(data.totalHits / newsApiService.per_page);
-  if (data.length) {
+function onWarnNotification(data) {
+  newsApiService.incrementPage();
+  console.log(data.hits.length);
+
+  if (data.hits.length) {
     onCreateImageDescription(data);
   }
-  if (remainImages < newsApiService.per_page) {
+  if (data.hits.length < newsApiService.per_page) {
     Notiflix.Notify.warning(
       'We are sorry, but you have reached the end of search results'
     );
