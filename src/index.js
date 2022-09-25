@@ -47,6 +47,7 @@ function onFilterSearch(data) {
     Notiflix.Notify.failure(
       'Sorry, there are no images matching your search query. Please try again.'
     );
+    button.style.visibility = 'hidden';
   }
 
   console.dir(data);
