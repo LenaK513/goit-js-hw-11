@@ -36,12 +36,10 @@ function onLoadMoreImages() {
 }
 
 function onFilterSearch(data) {
-   console.log(data);
+  console.log(data);
 
   if (data.hits.length) {
-     Notiflix.Notify.success(
-    `Hooray! We found ${data.totalHits} images.`
-  );
+    Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
     onCreateImageDescription(data);
   } else {
     Notiflix.Notify.failure(
@@ -54,7 +52,7 @@ function onFilterSearch(data) {
 
 function onImagesListNotification(data) {
   console.log(data);
-  const remainImages = Math.ceil(data.totalHits/newsApiService.per_page)
+  const remainImages = Math.ceil(data.totalHits / newsApiService.per_page);
   if (data.length) {
     onCreateImageDescription(data);
   }
@@ -66,15 +64,17 @@ function onImagesListNotification(data) {
 }
 
 function onCreateImageDescription(data) {
-  console.log(data)
+  console.log(data);
   const imageInfo = data.hits
     .map(
       h => `<div class="photo-card">
-      <div class="img-thumb">
+     
       <a href=${h.largeImageURL}>
+       <div class="img-thumb">
   <img src="${h.webformatURL}" alt="${h.tags}" loading="lazy" />
+   </div>
   </a>
-  </div>
+ 
   <div class="info">
     <p class="info-item">
       <b>Likes
@@ -105,16 +105,13 @@ function onCreateImageDescription(data) {
 
   gallery.insertAdjacentHTML('beforeend', imageInfo);
 
-  
-const lightbox = new SimpleLightbox(".gallery a", {
-  captionsData: "alt",
-  captionPosition: "bottom",
-  captionDelay: "250",
-});
-lightbox.refresh()
+  const lightbox = new SimpleLightbox('.gallery a', {
+    captionsData: 'alt',
+    captionPosition: 'bottom',
+    captionDelay: '250',
+  });
+  lightbox.refresh();
 }
-
-
 
 function onClearGallery() {
   gallery.innerHTML = '';
