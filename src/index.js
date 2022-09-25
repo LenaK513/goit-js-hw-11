@@ -9,17 +9,17 @@ import Notiflix from 'notiflix';
 import NewsApiService from './news-apiservece';
 
 const form = document.querySelector('#search-form');
-const input = document.querySelector('#input');
-const button = document.querySelector('.load-more');
+const tracker = document.querySelector('.tracker');
+// const button = document.querySelector('.load-more');
 const gallery = document.querySelector('.gallery');
 
 const newsApiService = new NewsApiService();
 
-button.style.visibility = 'hidden';
+// button.style.visibility = 'hidden';
 console.log(newsApiService);
 
 form.addEventListener('submit', onSearchImages);
-button.addEventListener('click', onLoadMoreImages);
+// button.addEventListener('click', onLoadMoreImages);
 
 function onSearchImages(event) {
   event.preventDefault();
@@ -28,14 +28,14 @@ function onSearchImages(event) {
   newsApiService.searchQuery = event.currentTarget.elements.searchQuery.value;
 
   newsApiService.fetchImages().then(onFilterSearch);
-
-  button.style.visibility = 'visible';
+  event.currentTarget.elements.searchQuery.value = '';
+  // button.style.visibility = 'visible';
   console.log(newsApiService);
 }
 
-function onLoadMoreImages() {
-  newsApiService.fetchImages().then(onWarnNotification);
-}
+// function onLoadMoreImages() {
+//   newsApiService.fetchImages().then(onWarnNotification);
+// }
 
 function onFilterSearch(data) {
   console.log(data);
@@ -47,7 +47,7 @@ function onFilterSearch(data) {
     Notiflix.Notify.failure(
       'Sorry, there are no images matching your search query. Please try again.'
     );
-    button.style.visibility = 'hidden';
+    // button.style.visibility = 'hidden';
   }
 
   console.dir(data);
@@ -55,8 +55,6 @@ function onFilterSearch(data) {
 
 function onWarnNotification(data) {
   newsApiService.incrementPage();
-  console.log(data.hits.length);
-  console.log(data.totalHits);
 
   if (data.totalHits) {
     onCreateImageDescription(data);
@@ -121,3 +119,17 @@ function onCreateImageDescription(data) {
 function onClearGallery() {
   gallery.innerHTML = '';
 }
+
+const onEntry = entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting && newsApiService.searchQuery !== '') {
+      newsApiService.fetchImages().then(onWarnNotification);
+    }
+  });
+};
+
+const observer = new IntersectionObserver(onEntry, {
+  rootMargin: '100px',
+});
+
+observer.observe(tracker);
