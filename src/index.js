@@ -38,7 +38,7 @@ function onLoadMoreImages() {
 function onFilterSearch(data) {
   console.log(data);
 
-  if (data.hits.length) {
+  if (data.totalHits) {
     Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
     onCreateImageDescription(data);
   } else {
@@ -54,10 +54,10 @@ function onWarnNotification(data) {
   newsApiService.incrementPage();
   console.log(data.hits.length);
 
-  if (data.hits.length) {
+  if (data.totalHits) {
     onCreateImageDescription(data);
   }
-  if (data.hits.length < newsApiService.per_page) {
+  if (data.totalHits < newsApiService.per_page) {
     Notiflix.Notify.warning(
       'We are sorry, but you have reached the end of search results'
     );
