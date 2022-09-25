@@ -15,6 +15,7 @@ const gallery = document.querySelector('.gallery');
 
 const newsApiService = new NewsApiService();
 
+button.style.visibility = 'hidden';
 console.log(newsApiService);
 
 form.addEventListener('submit', onSearchImages);
@@ -23,11 +24,12 @@ button.addEventListener('click', onLoadMoreImages);
 function onSearchImages(event) {
   event.preventDefault();
   onClearGallery();
+
   newsApiService.searchQuery = event.currentTarget.elements.searchQuery.value;
 
   newsApiService.fetchImages().then(onFilterSearch);
-  // .catch(onImageError);
 
+  button.style.visibility = 'visible';
   console.log(newsApiService);
 }
 
