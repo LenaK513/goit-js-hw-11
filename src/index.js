@@ -27,16 +27,15 @@ console.log(newsApiService);
 form.addEventListener('submit', onSearchImages);
 // button.addEventListener('click', onLoadMoreImages);
 
-let pageLeft;
-
 function onSearchImages(event) {
   event.preventDefault();
   onClearGallery();
-
+  newsApiService.resetPage();
   newsApiService.searchQuery = event.currentTarget.elements.searchQuery.value;
 
   newsApiService.fetchImages().then(onFilterSearch);
   event.currentTarget.elements.searchQuery.value = '';
+
   // button.style.visibility = 'visible';
   console.log(newsApiService);
 }
@@ -47,7 +46,7 @@ function onSearchImages(event) {
 
 function onFilterSearch(data) {
   console.log(data);
-  const pageEnd = Math.ceil(data.hits.length / newsApiService.per_page);
+
   if (data.totalHits) {
     Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
     onCreateImageDescription(data);
@@ -65,11 +64,11 @@ function onFilterSearch(data) {
 function onWarnNotification(data) {
   newsApiService.incrementPage();
   const pageEnd = Math.ceil(data.hits.length / newsApiService.per_page);
-  console.log(pageEnd);
+  // console.log(pageEnd);
   if (data.totalHits) {
     onCreateImageDescription(data);
   }
-  if (newsApiService.page > pageEnd || data.hits.length == 0) {
+  if (data.hits.length == 0) {
     Notiflix.Notify.warning(
       'We are sorry, but you have reached the end of search results'
     );
@@ -130,12 +129,7 @@ function onClearGallery() {
 const onEntry = entries => {
   entries.forEach(entry => {
     if (entry.isIntersecting && newsApiService.searchQuery !== '') {
-      // newsApiService.page += 1;
       newsApiService.fetchImages().then(onWarnNotification);
-
-      // if (newsApiService.page > pageEnd) {
-      //   observer.unobserve(entry.isIntersecting);
-      // }
     }
   });
 };
@@ -143,5 +137,4 @@ const onEntry = entries => {
 const observer = new IntersectionObserver(onEntry, {
   rootMargin: '100px',
 });
-
 observer.observe(tracker);
