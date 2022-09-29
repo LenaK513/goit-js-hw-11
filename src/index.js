@@ -8,9 +8,17 @@ import 'simplelightbox/dist/simple-lightbox.min.css';
 import Notiflix from 'notiflix';
 import NewsApiService from './news-apiservece';
 
+// const button = document.querySelector('.load-more');
+// button.addEventListener('click', onLoadMoreImages);
+
+// function onLoadMoreImages() {
+//   newsApiService.fetchImages().then(onWarnNotification);
+// }
+// button.style.visibility = 'hidden';
+// button.style.visibility = 'visible';
+
 const form = document.querySelector('#search-form');
 const tracker = document.querySelector('.tracker');
-// const button = document.querySelector('.load-more');
 const gallery = document.querySelector('.gallery');
 
 const lightbox = new SimpleLightbox('.gallery a', {
@@ -20,12 +28,9 @@ const lightbox = new SimpleLightbox('.gallery a', {
 });
 
 const newsApiService = new NewsApiService();
-
-// button.style.visibility = 'hidden';
-console.log(newsApiService);
+console.dir(newsApiService);
 
 form.addEventListener('submit', onSearchImages);
-// button.addEventListener('click', onLoadMoreImages);
 
 function onSearchImages(event) {
   event.preventDefault();
@@ -33,16 +38,9 @@ function onSearchImages(event) {
   newsApiService.resetPage();
   newsApiService.searchQuery = event.currentTarget.elements.searchQuery.value;
 
-  newsApiService.fetchImages().then(onFilterSearch);
   event.currentTarget.elements.searchQuery.value = '';
-
-  // button.style.visibility = 'visible';
-  console.log(newsApiService);
+  newsApiService.fetchImages().then(onFilterSearch);
 }
-
-// function onLoadMoreImages() {
-//   newsApiService.fetchImages().then(onWarnNotification);
-// }
 
 function onFilterSearch(data) {
   console.log(data);
@@ -50,21 +48,27 @@ function onFilterSearch(data) {
   if (data.totalHits) {
     Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
     onCreateImageDescription(data);
+    observer.observe(tracker);
   } else {
     Notiflix.Notify.failure(
       'Sorry, there are no images matching your search query. Please try again.'
     );
   }
-
-  // button.style.visibility = 'hidden';
-
-  console.dir(data);
 }
 
-function onWarnNotification(data) {
-  newsApiService.incrementPage();
-  const pageEnd = Math.ceil(data.hits.length / newsApiService.per_page);
-  // console.log(pageEnd);
+const onEntry = entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting && newsApiService.searchQuery !== '') {
+      newsApiService.fetchImages().then(onLoadMoreImages);
+    }
+  });
+};
+
+const observer = new IntersectionObserver(onEntry, {
+  rootMargin: '100px',
+});
+
+function onLoadMoreImages(data) {
   if (data.totalHits) {
     onCreateImageDescription(data);
   }
@@ -72,13 +76,11 @@ function onWarnNotification(data) {
     Notiflix.Notify.warning(
       'We are sorry, but you have reached the end of search results'
     );
-
     observer.unobserve(tracker);
   }
 }
 
 function onCreateImageDescription(data) {
-  console.log(data);
   const imageInfo = data.hits
     .map(
       h => `<div class="photo-card">
@@ -125,16 +127,3 @@ function onCreateImageDescription(data) {
 function onClearGallery() {
   gallery.innerHTML = '';
 }
-
-const onEntry = entries => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting && newsApiService.searchQuery !== '') {
-      newsApiService.fetchImages().then(onWarnNotification);
-    }
-  });
-};
-
-const observer = new IntersectionObserver(onEntry, {
-  rootMargin: '100px',
-});
-observer.observe(tracker);
